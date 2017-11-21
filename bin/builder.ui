@@ -1,0 +1,202 @@
+<interface>
+   <object id="window" class="GtkWindow">
+      <property name="visible">True</property>
+      <property name="title">Robot Controller</property>
+      <property name="border-width">10</property>
+      <child>
+         <object id="window_box" class="GtkGrid">
+            <property name="visible">true</property>
+
+            <!-- CONTROLLER DEBUG FRAME -->
+            <child>
+               <object id="controller_grid_frame" class ="GtkFrame">
+                  <property name="visible">true</property>
+                  <property name="margin-top">12</property>
+                  <property name="label">Controller buttons</property>
+                  <child>
+                     <object id="controller_grid" class="GtkGrid">
+                        <property name="visible">true</property>
+                        <property name="border-width">10</property>
+                     </object>
+                  </child>
+               </object>
+               <packing>
+                  <property name="left-attach">0</property>
+                  <property name="top-attach">1</property>
+               </packing>
+            </child>
+
+            <!-- CONTROLLER DEBUG AXIS FRAME -->
+            <child>
+               <object id="controller_grid_axis_frame" class ="GtkFrame">
+                  <property name="visible">true</property>
+                  <property name="margin-top">12</property>
+                  <property name="label">Controller axis</property>
+                  <child>
+                     <object id="controller_grid_axis" class="GtkGrid">
+                        <property name="visible">true</property>
+                        <property name="border-width">10</property>
+                     </object>
+                  </child>
+               </object>
+               <packing>
+                  <property name="left-attach">0</property>
+                  <property name="top-attach">2</property>
+               </packing>
+            </child>
+
+            <!-- SERIAL DEBUG FRAME --><child>
+               <object id="serial_grid_frame" class ="GtkFrame">
+                  <property name="visible">true</property>
+                  <property name="margin-top">12</property>
+                  <property name="label">Serial data</property>
+                  <child>
+                     <object id="serial_grid" class="GtkGrid">
+                        <property name="visible">true</property>
+                        <property name="border-width">10</property>
+                     </object>
+                  </child>
+               </object>
+               <packing>
+                  <property name="left-attach">0</property>
+                  <property name="top-attach">3</property>
+               </packing>
+            </child>
+
+            <!-- Joystick and serial frame -->
+            <child>
+               <object id="grid" class="GtkGrid">
+                  <property name="visible">True</property>
+
+                  <!-- Joystick label -->
+                  <child>
+                     <object id="joystick_label" class="GtkLabel">
+                        <property name="visible">true</property>
+                        <property name="label">Joystick</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                     </packing>
+                  </child>
+
+                  <!-- Serial label -->
+                  <child>
+                     <object id="serial_label" class="GtkLabel">
+                        <property name="visible">true</property>
+                        <property name="label">Serial Port</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                     </packing>
+                  </child>
+
+                  <!-- Joystick refresh button -->
+                  <child>
+                     <object id="refresh_joystick" class="GtkButton">
+                        <property name="visible">True</property>
+                        <property name="label">Refresh</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                     </packing>
+                  </child>
+
+                  <!-- Serial refresh button -->
+                  <child>
+                     <object id="refresh_serial" class="GtkButton">
+                        <property name="visible">True</property>
+                        <property name="label">Refresh</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                     </packing>
+                  </child>
+
+                  <!-- Joystick connect button -->
+                  <child>
+                     <object id="connect_joystick" class="GtkButton">
+                        <property name="visible">True</property>
+                        <property name="label">Connect</property>
+                        <property name="margin-left">15</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">1</property>
+                     </packing>
+                  </child>
+
+                  <!-- Joystick disconnect button -->
+                  <child>
+                     <object id="disconnect_joystick" class="GtkButton">
+                        <property name="visible">True</property>
+                        <property name="label">Disconnect</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">1</property>
+                     </packing>
+                  </child>
+
+                  <!-- Serial connect button -->
+                  <child>
+                     <object id="connect_serial" class="GtkButton">
+                        <property name="visible">True</property>
+                        <property name="label">Connect</property>
+                        <property name="margin-left">15</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">3</property>
+                     </packing>
+                  </child>
+
+                  <!-- Serial disconnect button -->
+                  <child>
+                     <object id="disconnect_serial" class="GtkButton">
+                        <property name="visible">True</property>
+                        <property name="label">Disconnect</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">3</property>
+                     </packing>
+                  </child>
+
+                  <!-- Joystick menu -->
+                  <child>
+                     <object id="joystick_menu" class="GtkComboBoxText">
+                        <property name="visible">true</property>
+                        <property name="width-request">100</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                     </packing>
+                  </child>
+
+                  <!-- Serial menu -->
+                  <child>
+                     <object id="serial_menu" class="GtkComboBoxText">
+                        <property name="visible">true</property>
+                        <property name="width-request">100</property>
+                     </object>
+                     <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                     </packing>
+                  </child>
+               </object>
+               <packing>
+                  <property name="left-attach">0</property>
+                  <property name="top-attach">0</property>
+               </packing>
+            </child>
+         </object>
+      </child>
+
+   </object>
+</interface>
