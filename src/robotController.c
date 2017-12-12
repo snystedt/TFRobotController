@@ -11,8 +11,6 @@
 
 #define SERIAL_PERIOD 35000 // The delay in microseconds between messages
 
-#define DEBUG
-
 int main(int argc, char* argv[]) {
 	//initiateAngleMatrix();
 	int status = gui_main(argc, argv);

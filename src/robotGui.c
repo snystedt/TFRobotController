@@ -31,6 +31,12 @@ static void disconnect_joystick(GtkWidget *menu, gpointer user_data)
         gtk_widget_set_sensitive(joystick_disconnect_button, false);
 }
 
+static void refresh_joystick(GtkWidget *button, gpointer widget) {
+        GtkBuilder *builder = widget;
+
+        populate_joystick(builder);
+}
+
 static void connect_serial(GtkWidget *button, gpointer widget)
 {
         gchar *menu_text;
@@ -60,6 +66,12 @@ static void disconnect_serial(GtkWidget *menu, gpointer user_data)
 
         gtk_widget_set_sensitive(serial_connect_button, true);
         gtk_widget_set_sensitive(serial_disconnect_button, false);
+}
+
+static void refresh_serial(GtkWidget *button, gpointer widget) {
+        GtkBuilder *builder = widget;
+
+        populate_serial(builder);
 }
 
 static void update_status (gpointer data)
@@ -141,6 +153,15 @@ char** populate_menu(size_t *size, char* dir, char **names, size_t names_size)
                 }
         }
 
+#ifdef DEBUG
+        if (*size < max_entries) {
+                char debug_entry[] = "(null)";
+                serial[*size] = calloc(strlen(debug_entry) + 1, sizeof(char));
+                memcpy(serial[*size], debug_entry, strlen(debug_entry) + 1);
+                *size = *size + 1;
+        }
+#endif
+
         if (*size < 30) {
                 serial = realloc(serial, *size);
         }
@@ -155,6 +176,7 @@ void populate_serial(GtkBuilder *builder)
 {
         GObject *combobar;
         combobar = gtk_builder_get_object(builder, "serial_menu");
+        gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(combobar));
         size_t names_size = 2;
         char *names[2];
         names[0] = "ttyACM"; names[1] = "ttyUSB";
@@ -172,6 +194,7 @@ void populate_joystick(GtkBuilder *builder)
 {
         GObject *combobar;
         combobar = gtk_builder_get_object(builder, "joystick_menu");
+        gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(combobar));
         size_t names_size = 1;
         char *names[1];
         names[0] = "js";
@@ -272,7 +295,7 @@ int gui_main(int argc, char* argv[])
         populate_controller_debug(grid);
         gdk_threads_add_idle((GSourceFunc)update_button, NULL);
 
-        // Debug-bar for the controller buttons
+        // Debug-bar for the controller axis
         grid = gtk_builder_get_object(builder, "controller_grid_axis");
         populate_controller_axis_debug(grid);
         gdk_threads_add_idle((GSourceFunc)update_axis, NULL);
@@ -285,8 +308,10 @@ int gui_main(int argc, char* argv[])
         // Get pointers to all connect/disconnect buttons
         joystick_connect_button = GTK_WIDGET(gtk_builder_get_object(builder, "connect_joystick"));
         joystick_disconnect_button = GTK_WIDGET(gtk_builder_get_object(builder, "disconnect_joystick"));
+        joystick_refresh_button = GTK_WIDGET(gtk_builder_get_object(builder, "refresh_joystick"));
         serial_connect_button = GTK_WIDGET(gtk_builder_get_object(builder, "connect_serial"));
         serial_disconnect_button = GTK_WIDGET(gtk_builder_get_object(builder, "disconnect_serial"));
+        serial_refresh_button = GTK_WIDGET(gtk_builder_get_object(builder, "refresh_serial"));
 
         // Connect joystick button
         button = G_OBJECT(joystick_connect_button);
@@ -298,6 +323,10 @@ int gui_main(int argc, char* argv[])
         g_signal_connect(button, "clicked", G_CALLBACK(disconnect_joystick), NULL);
         gtk_widget_set_sensitive(GTK_WIDGET(button), false);
 
+        // Refresh joystick button
+        button = G_OBJECT(joystick_refresh_button);
+        g_signal_connect(button, "clicked", G_CALLBACK(refresh_joystick), builder);
+
         // Connect serial button
         button = G_OBJECT(serial_connect_button);
         menu = gtk_builder_get_object(builder, "serial_menu");
@@ -307,6 +336,12 @@ int gui_main(int argc, char* argv[])
         button = G_OBJECT(serial_disconnect_button);
         g_signal_connect(button, "clicked", G_CALLBACK(disconnect_serial), NULL);
         gtk_widget_set_sensitive(GTK_WIDGET(button), false);
+
+        // Refresh serial button
+        button = G_OBJECT(serial_refresh_button);
+        g_signal_connect(button, "clicked", G_CALLBACK(refresh_serial), builder);
+
+        setup_threads();
 
         gtk_main();
 

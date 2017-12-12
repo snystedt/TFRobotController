@@ -63,18 +63,16 @@ void parse_config()
 		 * axis while the wireless controller implmenets these
 		 * as buttons. An axis/button agnostic setup would be
 		 * preferable. However this is TODO.
-
+		 */
 		else if (strcmp(word, "DPAD_UP") == 0) {
-			button->DPAD_UP = value;
+			button_array[value] = UP;
 		} else if (strcmp(word, "DPAD_DOWN") == 0) {
-			button->DPAD_DOWN = value;
+			button_array[value] = DOWN;
 		} else if (strcmp(word, "DPAD_LEFT") == 0) {
-			button->DPAD_LEFT = value;
+			button_array[value] = LEFT;
 		} else if (strcmp(word, "DPAD_RIGHT") == 0) {
-			button->DPAD_RIGHT = value;
-		}
-		*/
-		else if (strcmp(word, "START") == 0) {
+			button_array[value] = RIGHT;
+		} else if (strcmp(word, "START") == 0) {
 			button_array[value] = START;
 		} else if (strcmp(word, "SELECT") == 0) {
 			button_array[value] = SELECT;
@@ -90,9 +88,9 @@ void parse_config()
 			axis_array[value] = RY;
 		} else if (strcmp(word, "AXIS_RX") == 0) {
 			axis_array[value] = RX;
-		} else if (strcmp(word, "DPAD_Y") == 0) {
+		} else if (strcmp(word, "AXIS_DPAD_Y") == 0) {
 			axis_array[value] = DPAD_Y;
-		} else if (strcmp(word, "DPAD_X") == 0) {
+		} else if (strcmp(word, "AXIS_DPAD_X") == 0) {
 			axis_array[value] = DPAD_X;
 		} else if (strcmp(word, "XBOX") == 0) {
 			button_array[value] = XBOX;
@@ -124,10 +122,6 @@ static inline int get_real_button(int number)
 	return button_array[number];
 }
 
-/*
-	[	0	1	2	3	4	5	6			7		]
-	[	L2	R2	LY	LX RY RX	DPAD_Y	DPAD_X]
-*/
 static inline int get_real_axis (int number)
 {
 	return axis_array[number];
