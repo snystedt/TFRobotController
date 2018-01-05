@@ -2,6 +2,8 @@
 
 #define MSG_SIZE 8
 #define AXIS_THRESH 32
+#define AXIS_STICK(BYTE, THRESH) ((BYTE > (128 + THRESH)) || (BYTE < (128 - THRESH)))
+#define AXIS_TRIGGER(BYTE, THRESH) (BYTE > THRESH)
 
 byte incomingBytes[MSG_SIZE];
 
@@ -16,7 +18,7 @@ int three = 120;
 int four = 90;
 
 /* Definition av servon. En "Servo" variabel måste deklareras per servo. */
-Servo servoOne
+Servo servoOne;
 Servo servoTwo;
 Servo servoThree;
 Servo servoFour;
@@ -30,21 +32,21 @@ Servo servoFour;
  */
 void servoAttach() {
         servoOne.attach(10);
-        servoOne.write(rot);
+        servoOne.write(one);
         servoTwo.attach(7);
-        servoTwo.write(shoulder);
+        servoTwo.write(two);
         servoThree.attach(6);
-        servoThree.write(elbow);
+        servoThree.write(three);
         servoFour.attach(5);
-        servoFour.write(claw);  
+        servoFour.write(four);  
 }
 
 /* Anropas i slutet av loopen för att sätta servon i den nya vinkeln */
 void servoSet() {
-  servoOne.write(rot);
-  servoTwo.write(shoulder);
-  servoThree.write(elbow);
-  servoFour.write(claw); 
+  servoOne.write(one);
+  servoTwo.write(two);
+  servoThree.write(three);
+  servoFour.write(four); 
 }
 
 /* Anropas för att internt sätta en ny vinkel på ett servo. Första 
@@ -137,32 +139,32 @@ void processData() {
   }
   
   //Axis 1 (L2)
-  if (incomingBytes[2] > AXIS_THRESH) {
+  if (AXIS_TRIGGER(incomingBytes[2], AXIS_THRESH)) {
 
   }
   
   //Axis 2 (R2)
-  if (incomingBytes[3] > AXIS_THRESH) {
+  if (AXIS_TRIGGER(incomingBytes[3], AXIS_THRESH)) {
 
   }
   
   //Axis 3 (LY)
-  if ((incomingBytes[4] > (128 + AXIS_THRESH)) || (incomingBytes[4] < (128 - AXIS_THRESH))) {
+  if (AXIS_STICK(incomingBytes[4], AXIS_THRESH)) {
 
   }
   
   //Axis 4 (LX)
-  if ((incomingBytes[5] > (128 + AXIS_THRESH)) || (incomingBytes[5] < (128 - AXIS_THRESH))) {
+  if (AXIS_STICK(incomingBytes[5], AXIS_THRESH)) {
     
   }
   
   //Axis 5 (RY)
-  if ((incomingBytes[6] > (128 + AXIS_THRESH)) || (incomingBytes[6] < (128 - AXIS_THRESH))) {
+  if (AXIS_STICK(incomingBytes[6], AXIS_THRESH)) {
 
   }
   
   //Axis 6 (RX)
-  if ((incomingBytes[7] > (128 + AXIS_THRESH)) || (incomingBytes[7] < (128 - AXIS_THRESH))) {
+  if (AXIS_STICK(incomingBytes[7], AXIS_THRESH)) {
     
   }
 }

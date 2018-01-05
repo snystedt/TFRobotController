@@ -1,11 +1,13 @@
 #ifndef SERIAL_THREAD_H
 #define SERIAL_THREAD_H
 
+#define SERVO_NO 8
+
 #include <unistd.h>
 #include <pthread.h>
 #include "arduinoController.h"
 #include "serial_lib.h"
-#include "servo.h"
+#include "robotJoystick.h"
 
 // Serial thread data
 static pthread_t serial_thread;

@@ -23,7 +23,6 @@ int create_serial_thread(char* filename)
 		serial_running = false;
 		return -1;
 	}
-	fprintf(stderr, "In create_serial_thread ID: %d\n", (int)serial_thread);
 
 	return 0;
 }
@@ -31,9 +30,7 @@ int create_serial_thread(char* filename)
 int remove_serial_thread() {
 	serial_running = false;
 
-	fprintf(stdout, "pre (closing thread %d)\n", (int)serial_thread);
 	int errorcode = pthread_join(serial_thread, NULL);
-	fprintf(stdout, "post\n");
 	if (serial_fd != STDOUT_FILENO) close(serial_fd);
 
 	return errorcode;
@@ -42,6 +39,7 @@ int remove_serial_thread() {
 void *start_serial_thread(void* arg) {
 	fprintf(stdout, "Sleeping for 5 seconds to initialize serial communications\n");
 	usleep(5000000);
+	
 	while(serial_running) {
 
 		for (int i = 0; i < BUTTON_NO + AXIS_NO - 2; i++) {
@@ -55,7 +53,6 @@ void *start_serial_thread(void* arg) {
 		fprintf(stderr, "\n");
 #endif
 	}
-	fprintf(stdout, "Exiting serial thread\n");
 
 	return serial_state;
 }

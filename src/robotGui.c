@@ -1,5 +1,11 @@
 #include "robotGui.h"
 
+gboolean set_disconnect_sensitivity() {
+	gtk_widget_set_sensitive(serial_disconnect_button, true);
+	fprintf(stderr, "Turning on sensitivity\n");
+	return FALSE;
+}
+
 static void connect_joystick(GtkWidget *button, gpointer widget)
 {
         gchar *menu_text;
@@ -54,7 +60,7 @@ static void connect_serial(GtkWidget *button, gpointer widget)
         }
 
         gtk_widget_set_sensitive(serial_connect_button, false);
-        gtk_widget_set_sensitive(serial_disconnect_button, true);
+        g_timeout_add(5500, (GSourceFunc)set_disconnect_sensitivity, NULL);
 }
 
 static void disconnect_serial(GtkWidget *menu, gpointer user_data)
@@ -80,11 +86,18 @@ static void update_status (gpointer data)
                 return;
         }
 
+#ifdef _MY_CONTROLLER_H_
+        int msg_len = MY_MSG_LENGTH;
+#else
+        int msg_len = 8;
+#endif
+
         char *buff;
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < msg_len; i++) {
                 buff = g_strdup_printf("      %03d      ", (int)status_data.serial_state[i]);
                 gtk_label_set_text(GTK_LABEL(status_bar[i]), buff);
+                g_free(buff);
         }
 }
 
@@ -98,6 +111,7 @@ static void update_button(gpointer data)
         for (int i = 0; i < 15; i++) {
                 buff = g_strdup_printf("      %s      ", (status_data.controller_state[i/8] & (1 << (i%8))) >= 1 ? "X" : "   ");
                 gtk_label_set_text(GTK_LABEL(button_bar[i]), buff);
+                g_free(buff);
         }
 
 }
@@ -105,6 +119,7 @@ static void update_button(gpointer data)
 static void update_axis(gpointer data)
 {
         if (status_data.controller_state == NULL) {
+                fprintf(stderr, "Error: couldn't fetch controller axis data\n");
                 return;
         }
 
@@ -113,6 +128,7 @@ static void update_axis(gpointer data)
         for (int i = 0; i < AXIS_NO_SHOW; i++) {
                 buff = g_strdup_printf("     %03d     ", status_data.controller_state[i+2]);
                 gtk_label_set_text(GTK_LABEL(axis_bar[i]), buff);
+                g_free(buff);
         }
 
 }
@@ -157,13 +173,13 @@ char** populate_menu(size_t *size, char* dir, char **names, size_t names_size)
         if (*size < max_entries) {
                 char debug_entry[] = "(null)";
                 serial[*size] = calloc(strlen(debug_entry) + 1, sizeof(char));
-                memcpy(serial[*size], debug_entry, strlen(debug_entry) + 1);
+                strncpy(serial[*size], debug_entry, strlen(debug_entry) + 1);
                 *size = *size + 1;
         }
 #endif
 
         if (*size < 30) {
-                serial = realloc(serial, *size);
+                serial = realloc(serial, (*size) * sizeof(char*));
         }
         else if (*size == 0) {
                 serial = NULL;
@@ -183,7 +199,7 @@ void populate_serial(GtkBuilder *builder)
         size_t size;
         char **items = populate_menu(&size, "/dev/", names, names_size);
         for(size_t i = 0; i < size; i++) {
-                gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combobar), NULL, items[i]);
+                gtk_combo_box_text_prepend(GTK_COMBO_BOX_TEXT(combobar), NULL, items[i]);
                 free(items[i]);
         }
 
@@ -202,7 +218,8 @@ void populate_joystick(GtkBuilder *builder)
         char **items = populate_menu(&size, "/dev/input/", names, names_size);
 
         for(size_t i = 0; i < size; i++) {
-                gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combobar), NULL, items[i]);
+                fprintf(stderr, "Appending: %s\n", items[i]);
+                gtk_combo_box_text_prepend(GTK_COMBO_BOX_TEXT(combobar), NULL, items[i]);
                 free(items[i]);
         }
 
@@ -252,9 +269,15 @@ void populate_controller_axis_debug(GObject *grid)
 void populate_serial_debug(GObject *grid)
 {
         gtk_grid_set_column_spacing(GTK_GRID(grid), 2);
-        char *names[] =   {"0", "1", "2", "3", "4", "5", "6", "7"};
+#ifdef _MY_CONTROLLER_H_
+        char *names[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+        int msg_len = MY_MSG_LENGTH;
+#else
+        char *names[] = {"0", "1", "2", "3", "4", "5", "6", "7"};
+        int msg_len = 8;
+#endif
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < msg_len; i++) {
                 GtkWidget *frame = gtk_frame_new(NULL);
                 GtkWidget *label = gtk_label_new(names[i]);
                 gtk_grid_attach(GTK_GRID(grid), label, i, 0, 1, 1);
@@ -293,17 +316,17 @@ int gui_main(int argc, char* argv[])
         // Debug-bar for the controller buttons
         grid = gtk_builder_get_object(builder, "controller_grid");
         populate_controller_debug(grid);
-        gdk_threads_add_idle((GSourceFunc)update_button, NULL);
+        g_timeout_add(30, (GSourceFunc)update_button, NULL);
 
         // Debug-bar for the controller axis
         grid = gtk_builder_get_object(builder, "controller_grid_axis");
         populate_controller_axis_debug(grid);
-        gdk_threads_add_idle((GSourceFunc)update_axis, NULL);
+        g_timeout_add(30, (GSourceFunc)update_axis, NULL);
 
         // Debug-bar for the serial data
         grid = gtk_builder_get_object(builder, "serial_grid");
         populate_serial_debug(grid);
-        gdk_threads_add_idle((GSourceFunc)update_status, NULL);
+        g_timeout_add(30, (GSourceFunc)update_status, NULL);
 
         // Get pointers to all connect/disconnect buttons
         joystick_connect_button = GTK_WIDGET(gtk_builder_get_object(builder, "connect_joystick"));
