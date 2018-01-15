@@ -80,10 +80,10 @@ static void refresh_serial(GtkWidget *button, gpointer widget) {
         populate_serial(builder);
 }
 
-static void update_status (gpointer data)
+static gboolean update_status (gpointer data)
 {
         if (status_data.serial_state == NULL) {
-                return;
+                return TRUE;
         }
 
 #ifdef _MY_CONTROLLER_H_
@@ -99,12 +99,14 @@ static void update_status (gpointer data)
                 gtk_label_set_text(GTK_LABEL(status_bar[i]), buff);
                 g_free(buff);
         }
+
+	return TRUE;
 }
 
-static void update_button(gpointer data)
+static gboolean update_button(gpointer data)
 {
         if (status_data.controller_state == NULL) {
-                return;
+                return TRUE;;
         }
         char *buff;
 
@@ -114,13 +116,14 @@ static void update_button(gpointer data)
                 g_free(buff);
         }
 
+	return TRUE;
 }
 
-static void update_axis(gpointer data)
+static gboolean update_axis(gpointer data)
 {
         if (status_data.controller_state == NULL) {
                 fprintf(stderr, "Error: couldn't fetch controller axis data\n");
-                return;
+                return TRUE;
         }
 
         char *buff;
@@ -131,6 +134,7 @@ static void update_axis(gpointer data)
                 g_free(buff);
         }
 
+	return TRUE;
 }
 
 char** populate_menu(size_t *size, char* dir, char **names, size_t names_size)
