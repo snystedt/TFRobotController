@@ -166,8 +166,7 @@ int change_axis_state(int axis_state[], struct js_event e)
 	@param state is a pointer to an array of integers of size BUTTON_NO + AXIS_NO
 
 */
-void update_state(int joyfd,
-									controller_struct *controller_data)
+void update_state(int joyfd, controller_struct *controller_data)
 {
 	struct js_event e;
 	int axis_pressed;

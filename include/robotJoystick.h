@@ -35,8 +35,7 @@ static inline int get_real_button(int number);
 static inline int get_real_axis (int number);
 int change_button_state(__u16 *button_state, struct js_event e);
 int change_axis_state(int axis_state[], struct js_event e);
-void update_state(int joyfd,
-									controller_struct *controller_data);
+void update_state(int joyfd, controller_struct *controller_data);
 void fix_xbox_dpad(__u16 *button_state, int axis_state[], int pressed);
 void print_state(controller_struct *controller_data);
 void collect_state(controller_struct *controller_data, unsigned char *state);

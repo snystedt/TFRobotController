@@ -3,15 +3,14 @@
 int create_serial_thread(char* filename)
 {
 	if (!strcmp(filename, "/dev/(null)")) {
-		serial_fd = STDOUT_FILENO;
+		serial_fd = -1;
 	} else {
 		serial_fd = serialport_init(filename, 9600);
-	}
-
-	if (serial_fd < 0) {
-		fprintf(stderr, "error %d opening %s: %s\n", errno,
-		filename, strerror(errno));
-		return -1;
+		if (serial_fd < 0) {
+			fprintf(stderr, "error %d opening %s: %s\n", errno,
+			filename, strerror(errno));
+			return -1;
+		}
 	}
 
 	set_fd(serial_fd);
@@ -39,7 +38,7 @@ int remove_serial_thread() {
 void *start_serial_thread(void* arg) {
 	fprintf(stdout, "Sleeping for 5 seconds to initialize serial communications\n");
 	usleep(5000000);
-	
+
 	while(serial_running) {
 
 		for (int i = 0; i < BUTTON_NO + AXIS_NO - 2; i++) {
@@ -47,7 +46,7 @@ void *start_serial_thread(void* arg) {
 		}
 		write_state(serial_state, BUTTON_NO + AXIS_NO - 2, 35000);
 #ifdef DEBUG
-		for (uint i = 0; i < BUTTON_NO + AXIS_NO; i++) {
+		for (uint i = 0; i < BUTTON_NO + AXIS_NO - 2; i++) {
 			fprintf(stderr, "%d ", (int)serial_state[i]);
 		}
 		fprintf(stderr, "\n");
