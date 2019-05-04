@@ -1,6 +1,8 @@
 # TFRobotController
 TFRobotController is a simple program for Linux which reads a joystick and forwards the joystick state over to a serial device.
 
+This program was written during fall 2016 and spring 2017 as a project for the Teknisk Fysik annual robot competition at Umeå University.
+
 ## How to build
 First, there are some prerequisites.
 
